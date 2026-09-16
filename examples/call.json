@@ -1,0 +1,7 @@
+{
+  "turns": [
+    {"speaker": "agent", "text": "Thanks for calling Northside Dental."},
+    {"speaker": "caller", "text": "Hi, I'd like to book a cleaning."},
+    {"speaker": "agent", "text": "You're all set, Jordan."}
+  ]
+}

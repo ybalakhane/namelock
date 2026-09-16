@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "namelock"
+version = "0.1.0"
+description = "Fail a voice-agent call if the agent addresses the wrong person."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Isaac Balakhani" }]
+keywords = ["voice", "identity", "telephony", "evaluation"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+]
+dependencies = []
+
+[project.scripts]
+namelock = "namelock.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ybalakhane/namelock"
+Issues = "https://github.com/ybalakhane/namelock/issues"
+
+[tool.setuptools.packages.find]
+include = ["namelock*"]
