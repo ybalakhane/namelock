@@ -37,6 +37,20 @@ class TestWrongName(unittest.TestCase):
         text = "You're all set, Xander."
         self.assertEqual(check_text(text, "Alex", aliases=["Xander"]), [])
 
+    def test_title_does_not_hide_a_different_person(self):
+        text = "You're all set, Dr. Smith."
+        findings = check_text(text, "Alex Test")
+        self.assertEqual([f.name for f in findings], ["Smith"])
+        self.assertIn("Dr. Smith", findings[0].snippet)
+
+    def test_title_before_expected_name_passes(self):
+        self.assertEqual(check_text("Hi, Dr. Alex.", "Alex Test"), [])
+        self.assertEqual(check_text("Hi, Mrs. Alex.", "Alex Test"), [])
+
+    def test_title_without_a_following_name_is_not_a_person(self):
+        self.assertEqual(check_text("Hi, Doctor.", "Alex Test"), [])
+        self.assertEqual(check_text("You're all set, Dr. Tuesday.", "Alex Test"), [])
+
     def test_cli_wrong_name_exits_1(self):
         path = ROOT / "examples" / "wrong-name.txt"
         self.assertEqual(
