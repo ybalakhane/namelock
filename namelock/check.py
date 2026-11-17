@@ -31,6 +31,8 @@ VOCATIVE_PREFIX = re.compile(
     r")\s*,\s+"
 )
 PROPER_NAME = re.compile(r"^([A-Z][a-z]+)\b")
+# Honorifics are not the addressee. "You're all set, Dr. Smith." addresses Smith.
+TITLE_PREFIX = re.compile(r"(?:Doctor|Dr|Mister|Miss|Mrs|Ms)\.?\s+")
 NAME_THEN_YOU = re.compile(
     r"\b([A-Z][a-z]+),\s+(?:you're|you are|your)\b"
 )
@@ -60,16 +62,29 @@ def _aliases(expected: str, extra: list[str] | None) -> set[str]:
     return {x for x in allowed if x}
 
 
+def _person_after(tail: str) -> tuple[str, int] | None:
+    """Return the person named at the start of tail, skipping one honorific."""
+    offset = 0
+    title = TITLE_PREFIX.match(tail)
+    if title:
+        offset = title.end()
+    name_match = PROPER_NAME.match(tail[offset:])
+    if not name_match:
+        return None
+    name = name_match.group(1)
+    if name in NOT_A_PERSON:
+        return None
+    return name, offset + name_match.end()
+
+
 def _vocatives(text: str) -> list[tuple[str, str]]:
     found: list[tuple[str, str]] = []
     for match in VOCATIVE_PREFIX.finditer(text):
-        name_match = PROPER_NAME.match(text[match.end() :])
-        if not name_match:
+        person = _person_after(text[match.end() :])
+        if person is None:
             continue
-        name = name_match.group(1)
-        if name in NOT_A_PERSON:
-            continue
-        end = match.end() + name_match.end()
+        name, consumed = person
+        end = match.end() + consumed
         snippet = text[max(0, match.start()) : end].strip()
         found.append((name, snippet))
     for match in NAME_THEN_YOU.finditer(text):
