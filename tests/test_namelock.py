@@ -17,6 +17,13 @@ class TestWrongName(unittest.TestCase):
         self.assertTrue(findings)
         self.assertEqual(findings[0].name, "Jordan")
 
+    def test_name_then_you_fails(self):
+        text = "Jordan, you're booked."
+        findings = check_text(text, "Alex Test")
+        self.assertTrue(findings)
+        self.assertEqual(findings[0].name, "Jordan")
+        self.assertEqual(findings[0].line, 1)
+
     def test_expected_name_passes(self):
         text = "You're all set, Alex. See you Tuesday."
         self.assertEqual(check_text(text, "Alex Test"), [])
