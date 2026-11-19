@@ -16,7 +16,23 @@ namelock call.json --expect-name Alex --alias Xander
 ```
 
 Exit 0 if the agent only addressed the expected person. Exit 1 on a mismatch,
-so it can gate a deploy the same way `turnlag --max-p50` does.
+so it can gate a deploy the same way `turnlag --max-p50` does. Exit 2 when
+the file is missing or the JSON is not a transcript.
+
+## Setup
+
+Python 3.10 or newer. No dependencies.
+
+`pip install .` provides the `namelock` command above. From a checkout,
+without installing, use `python -m namelock`. That is what CI runs.
+`--json` prints `ok`, `expected`, and `findings` (`name`, `line`,
+`snippet`) and does not change the exit code.
+
+```
+python -m namelock examples/right-name.txt --expect-name "Alex Test"
+python -m namelock examples/call.json --expect-name "Alex Test" --json
+python -m unittest discover -s tests -v
+```
 
 ## What it looks at
 
@@ -38,5 +54,5 @@ No dependencies. Synthetic examples only — no real recordings in the repo.
 ## In CI
 
 ```
-namelock examples/right-name.txt --expect-name "Alex Test"
+python -m namelock examples/right-name.txt --expect-name "Alex Test"
 ```
